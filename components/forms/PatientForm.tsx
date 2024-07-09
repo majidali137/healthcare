@@ -11,6 +11,7 @@ import SubmitButton from "../SubmitButton";
 import { useState } from "react";
 import { UserFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
+import { createUser } from "@/lib/actions/patient.actions";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -46,15 +47,15 @@ const PatientForm = () => {
     setIsLoading(true);
 
     try {
-//       const userData = {
-//         name,
-//         email,
-//         phone,
-//       };
+      const userData = {
+        name,
+        email,
+        phone,
+      };
 
-// const user = await createUser(userData)
+const user = await createUser(userData)
 
-// if(user) router.push(`/patients/${user.$id}/register`)
+if(user) router.push(`/patients/${user.$id}/register`)
 
     } catch (error) {
       console.log(error);
@@ -68,8 +69,8 @@ const PatientForm = () => {
           <p className="text-dark-700">Schedule your first appointment. </p>
         </section>
         <CustomFormField
-          control={form.control}
           fieldType={FormFieldType.INPUT}
+          control={form.control}
           name="name"
           label="Full Name"
           placeholder="your Name"
@@ -78,8 +79,8 @@ const PatientForm = () => {
         />
 
         <CustomFormField
-          control={form.control}
           fieldType={FormFieldType.INPUT}
+          control={form.control}
           name="email"
           label="Email"
           placeholder="example@gmail.com"
@@ -88,8 +89,8 @@ const PatientForm = () => {
         />
 
         <CustomFormField
-          control={form.control}
           fieldType={FormFieldType.PHONE_INPUT}
+          control={form.control}
           name="phone"
           label="Phone Number"
           placeholder="1234-1234567"
