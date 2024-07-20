@@ -17,7 +17,7 @@ export const createUser = async (user: CreateUserParams) => {
             user.name
         )
 
-        console.log({ newUser })
+        console.log({ newUser }, "new user login")
 
         return parseStringify(newUser);
 

@@ -1,9 +1,33 @@
+"use client"
 import { StatCard } from "@/components/StatCard";
+import { getRecentAppointmentList } from "@/lib/actions/appointment.action";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const Admin = () => {
+interface AppointmentData {
+  scheduledCount: number;
+  pendingCount: number;
+  cancelledCount: number;
+  totalCount:number
+}
+
+const Admin =  () => {
+  // const appointments = await getRecentAppointmentList()
+
+  const [appointments, setAppointments] = useState<AppointmentData | null>(null);
+
+  useEffect(() => {
+      const fetchAppointments = async () => {
+          const data = await getRecentAppointmentList();
+          setAppointments(data);
+      };
+
+      fetchAppointments();
+  }, []); 
+  if (!appointments) return <div>Loading...</div>;
+  // return <div>{JSON.stringify(appointments)}</div>;
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col space-y-14">
       <header className="admin-header">
@@ -29,20 +53,26 @@ const Admin = () => {
 
         <section className="admin-stat">
           <StatCard
+            type="totalCount"
+            count={appointments?.totalCount}
+            label="Total Appointments"
+            icon="/assets/icons/totalappointments.svg"
+          />
+          <StatCard
             type="appointments"
-            count={5}
+            count={appointments?.scheduledCount}
             label="Scheduled appointments"
             icon="/assets/icons/appointments.svg"
           />
           <StatCard
             type="pending"
-            count={10}
+            count={appointments?. pendingCount}
             label="Pending appointments"
             icon="/assets/icons/pending.svg"
           />
           <StatCard
             type="cancelled"
-            count={2}
+            count={appointments?.cancelledCount}
             label="Cancelled appointments"
             icon="/assets/icons/cancelled.svg"
           />

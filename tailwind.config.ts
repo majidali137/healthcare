@@ -52,6 +52,7 @@ const config = {
       backgroundImage: {
         appointments: "url('/assets/images/appointments-bg.png')",
         pending: "url('/assets/images/pending-bg.png')",
+        totalCount: "url('/assets/images/totalCount-bg.png')",
         cancelled: "url('/assets/images/cancelled-bg.png')",
       },
       keyframes: {
