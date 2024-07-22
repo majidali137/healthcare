@@ -5,23 +5,54 @@ import { parseStringify } from "../utils"
 import { Appointment } from "@/types/appwrite.types"
 
 
-// create appointment
-export const createAppointment = async (appointment: CreateAppointmentParams) => {
-    try {
-        const newAppointment = await database.createDocument(
-            DATABASE_ID!,
-            APPOINTMENT_COLLECTION_ID!,
-            ID.unique(),
-            appointment
-        );
 
-        return parseStringify(newAppointment)
+import type { Models } from "appwrite";
+import { revalidatePath } from "next/cache"
 
-
-    } catch (error) {
-        console.log(error)
-    }
+interface AppointmentResponse {
+  totalCount: number;
+  scheduledCount: number;
+  pendingCount: number;
+  cancelledCount: number;
+  documents: Models.Document[];
 }
+
+// create appointment
+// export const createAppointment = async (appointment: CreateAppointmentParams) => {
+//     try {
+//         const newAppointment = await database.createDocument(
+//             DATABASE_ID!,
+//             APPOINTMENT_COLLECTION_ID!,
+//             ID.unique(),
+//             appointment
+//         );
+
+//         return parseStringify(newAppointment)
+
+
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
+export const createAppointment = async (
+    appointment: CreateAppointmentParams
+  ) => {
+    try {
+      const newAppointment = await database.createDocument(
+        DATABASE_ID!,
+        APPOINTMENT_COLLECTION_ID!,
+        ID.unique(),
+        appointment
+      );
+  
+    //   revalidatePath("/admin");
+      return parseStringify(newAppointment);
+    } catch (error) {
+      console.error("An error occurred while creating a new appointment:", error);
+    }
+  };
+
 
 // get appointment 
 export const getAppointment = async (appointmentId: string) => {
@@ -44,8 +75,7 @@ export const getRecentAppointmentList = async () => {
         const appointments = await database.listDocuments(
             DATABASE_ID!,
             APPOINTMENT_COLLECTION_ID!,
-            [Query.orderDesc('$createdAt')],
-           
+            [Query.orderDesc('$createdAt')]
         )
 
         const initialCounts = {
@@ -70,10 +100,38 @@ export const getRecentAppointmentList = async () => {
             ...counts,
             documents: appointments.documents
         }
-        console.log(parseStringify(data), "Get all recent appointmenets")
+        // console.log(parseStringify(data), "Get all recent")
         return parseStringify(data)
 
     } catch (error) {
         console.log(error)
     }
 }
+
+
+// update appointment
+export const updateAppointment = async ({
+    appointmentId,
+    userId,
+    appointment,
+    type,
+  }: UpdateAppointmentParams) => {
+    try {
+      // Update appointment to scheduled -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#updateDocument
+      const updatedAppointment = await database.updateDocument(
+        DATABASE_ID!,
+        APPOINTMENT_COLLECTION_ID!,
+        appointmentId,
+        appointment
+      );
+  
+      if (!updatedAppointment) throw Error;
+  
+     // SMS notification
+  
+      revalidatePath("/admin");
+      return parseStringify(updatedAppointment);
+    } catch (error) {
+      console.error("An error occurred while scheduling an appointment:", error);
+    }
+  }

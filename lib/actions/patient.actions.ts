@@ -94,5 +94,3 @@ export const getPatient = async (userId: string) => {
         console.log(error)
     }
 }
-
-
